@@ -4,7 +4,26 @@ from random import choice
 from math import sqrt, log
 
 num_nodes = 1000
-explore_faction = 2.
+explore_fraction = 2.
+
+def get_urgent_child(node):
+    n = node.visits
+    maxUCB = 0
+    best_child = None
+    for child in node.child_nodes:
+        xj = child.wins
+        nj = child.visits
+        C = 1
+
+        # Calculate
+        newUCB = xj + explore_fraction * (sqrt((2 * log(n)) / (nj)))
+        if newUCB > maxUCB:
+            best_child = child
+            maxUCB = newUCB
+
+    #If none, current node is leaf node
+    return best_child
+
 
 def traverse_nodes(node, state, identity):
     """ Traverses the tree until the end criterion are met.
@@ -17,6 +36,9 @@ def traverse_nodes(node, state, identity):
     Returns:        A node from which the next stage of the search can proceed.
 
     """
+    newchild = get_urgent_child(node)
+    while newchild != None:
+        node = newchild
     pass
     # Hint: return leaf_node
 
