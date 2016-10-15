@@ -4,19 +4,21 @@ from random import choice
 from math import sqrt, log
 
 num_nodes = 1000
-explore_fraction = 2.
+explore_faction = 2.
 
-def get_urgent_child(node):
+def get_urgent_child(node,identity):
     n = node.visits
     maxUCB = 0
     best_child = None
-    for child in node.child_nodes:
-        xj = child.wins
+    for action,child in node.child_nodes.items():
+        xj = child.wins/child.visits
+        # If opponent
+        if identity != state.player_turn:
+            xj = 1 - xj
         nj = child.visits
-        C = 1
 
         # Calculate
-        newUCB = xj + explore_fraction * (sqrt((2 * log(n)) / (nj)))
+        newUCB = xj + explore_faction * (sqrt((2 * log(n)) / (nj)))
         if newUCB > maxUCB:
             best_child = child
             maxUCB = newUCB
@@ -36,9 +38,13 @@ def traverse_nodes(node, state, identity):
     Returns:        A node from which the next stage of the search can proceed.
 
     """
-    newchild = get_urgent_child(node)
-    while newchild != None:
-        node = newchild
+    while True:
+        next_node = get_urgent_child(node,identity)
+        if next_node != None:
+            state.apply_move(next_node.parent_action)
+            node = next_node
+        else:
+            return node,state
     pass
     # Hint: return leaf_node
 
@@ -53,7 +59,11 @@ def expand_leaf(node, state):
     Returns:    The added child node.
 
     """
-    pass
+    next_action = node.untried_actions.pop()
+    next_node = MCTSNode(parent=node, parent_action=next_action, action_list=node.untried_actions)
+    node.child_nodes[next_action] = next_node
+    state.apply_move
+    return node.child_nodes[next_action], state
     # Hint: return new_node
 
 
@@ -100,9 +110,10 @@ def think(state):
         # Do MCTS - This is all you!
 
         #Traversal
-        node = traverse_nodes(node, state, identity_of_bot)
+        leaf,state = traverse_nodes(node, state, identity_of_bot)
 
         #Expansion
+        new_node,state = expand_leaf(leaf,state)
 
         #Rollout
 
