@@ -43,6 +43,12 @@ def traverse_nodes(node, state, identity):
         state.apply_move(next_node.parent_action)
         node,state = traverse_nodes(next_node, state, identity)
     else:
+        #print ('terminal is %r' % state.is_terminal())
+        #if next_node == None:
+        #    print('next_node is None')
+        #else:
+        #    print('next_node is not None')
+        #print ('length of untried actions is %i' % len(node.untried_actions))
         return node, state
 
     return node, state
@@ -128,7 +134,7 @@ def think(state):
         leaf,sampled_game = traverse_nodes(node, sampled_game, identity_of_bot)
 
         # Find out what happened
-        if not sampled_game.is_terminal():
+        if len(leaf.untried_actions) > 0:
             #Expansion
             new_node,sampled_game = expand_leaf(leaf,sampled_game)
     
