@@ -6,27 +6,6 @@ from math import sqrt, log
 num_nodes = 1000
 explore_faction = 2.
 
-def get_urgent_child(node,identity):
-    n = node.visits
-    maxUCB = 0
-    best_child = None
-    for action,child in node.child_nodes.items():
-        xj = child.wins/child.visits
-        # If opponent
-        if identity != state.player_turn:
-            xj = 1 - xj
-        nj = child.visits
-
-        # Calculate
-        newUCB = xj + explore_faction * (sqrt((2 * log(n)) / (nj)))
-        if newUCB > maxUCB:
-            best_child = child
-            maxUCB = newUCB
-
-    #If none, current node is leaf node
-    return best_child
-
-
 def traverse_nodes(node, state, identity):
     """ Traverses the tree until the end criterion are met.
 
@@ -38,13 +17,7 @@ def traverse_nodes(node, state, identity):
     Returns:        A node from which the next stage of the search can proceed.
 
     """
-    while True:
-        next_node = get_urgent_child(node,identity)
-        if next_node != None:
-            state.apply_move(next_node.parent_action)
-            node = next_node
-        else:
-            return node,state
+    
     pass
     # Hint: return leaf_node
 
@@ -59,11 +32,7 @@ def expand_leaf(node, state):
     Returns:    The added child node.
 
     """
-    next_action = node.untried_actions.pop()
-    next_node = MCTSNode(parent=node, parent_action=next_action, action_list=node.untried_actions)
-    node.child_nodes[next_action] = next_node
-    state.apply_move
-    return node.child_nodes[next_action], state
+    pass
     # Hint: return new_node
 
 
@@ -74,6 +43,20 @@ def rollout(state):
         state:  The state of the game.
 
     """
+    moves = state.legal_moves
+    for move in moves:
+        for r in range(num_nodes):
+                rollout_state = state.copy()
+                rollout_state.apply_move(move)
+    
+                # Only play to the specified depth. (estimated max 24 moves possible)
+                for i in range(50):
+                    if rollout_state.is_terminal():
+                        break
+                    rollout_move = choice(rollout_state.legal_moves)
+                    rollout_state.apply_move(rollout_move)
+    
+               # total_score += outcome(rollout_state.score)
     pass
 
 
@@ -85,6 +68,10 @@ def backpropagate(node, won):
         won:    An indicator of whether the bot won or lost the game.
 
     """
+    while(node.parent != None):
+        if(won):
+            node.wins += 1;
+        node = node.parent
     pass
 
 
@@ -108,16 +95,6 @@ def think(state):
         node = root_node
 
         # Do MCTS - This is all you!
-
-        #Traversal
-        leaf,state = traverse_nodes(node, state, identity_of_bot)
-
-        #Expansion
-        new_node,state = expand_leaf(leaf,state)
-
-        #Rollout
-
-        #Backpropagate
 
     # Return an action, typically the most frequently used action (from the root) or the action with the best
     # estimated win rate.

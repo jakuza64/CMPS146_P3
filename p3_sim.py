@@ -1,7 +1,7 @@
 from p3_game import create_game, State
 from timeit import default_timer as time
 
-import mcts_vanilla as red_bot
+import random_bot as red_bot
 import rollout_bot as blue_bot
 
 BOTS = {'red': red_bot, 'blue': blue_bot}
@@ -12,7 +12,7 @@ if hasattr(red_bot, 'num_nodes'):
 if hasattr(blue_bot, 'num_nodes'):
     blue_bot.num_nodes = 1000
 
-rounds = 1
+rounds = 100
 wins = {}
 
 start = time()  # To log how much time the simulation takes.
