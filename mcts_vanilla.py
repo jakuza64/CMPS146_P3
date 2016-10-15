@@ -38,18 +38,14 @@ def traverse_nodes(node, state, identity):
     Returns:        A node from which the next stage of the search can proceed.
 
     """
-    while True:
-        if len(node.untried_actions) != 0:
-            return node,state
-        next_node = get_urgent_child(node, state, identity)
-        if next_node != None:
-            state.apply_move(next_node.parent_action)
-            if state.is_terminal():
-                return node,state
-            node = next_node
-        else:
-            return node,state
-    pass
+    next_node = get_urgent_child(node, state, identity)
+    if next_node != None and len(node.untried_actions) == 0 and not state.is_terminal():
+        state.apply_move(next_node.parent_action)
+        node,state = traverse_nodes(next_node, state, identity)
+    else:
+        return node, state
+
+    return node, state
     # Hint: return leaf_node
 
 
@@ -130,6 +126,8 @@ def think(state):
 
         #Traversal
         leaf,sampled_game = traverse_nodes(node, sampled_game, identity_of_bot)
+
+        # Find out what happened
         if not sampled_game.is_terminal():
             #Expansion
             new_node,sampled_game = expand_leaf(leaf,sampled_game)
