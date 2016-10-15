@@ -4,7 +4,7 @@ from random import choice
 from math import sqrt, log
 
 num_nodes = 1000
-explore_faction = 2.
+explore_faction = .25
 
 def get_urgent_child(node, state, identity):
     n = node.visits
@@ -66,9 +66,9 @@ def expand_leaf(node, state):
 
     """
     next_action = node.untried_actions.pop()
+    state.apply_move(next_action)
     next_node = MCTSNode(parent=node, parent_action=next_action, action_list=state.legal_moves)
     node.child_nodes[next_action] = next_node
-    state.apply_move(next_action)
     return node.child_nodes[next_action], state
     # Hint: return new_node
 
