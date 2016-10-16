@@ -1,0 +1,17 @@
+Modified vs Vanilla
+Equal tree sizes
+100 Games
+
+At 100 Nodes:
+Modified - 50 to Vanilla - 50
+
+At 500:
+59-41
+
+At 1000:
+61-39
+
+At 2000:
+72-28
+
+Modified wins more games, but only at a higher node count. At lower node counts, Vanilla can compete with Modified pretty well.

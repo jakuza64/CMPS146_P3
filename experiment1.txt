@@ -1,0 +1,8 @@
+100 games
+Blue fixed at 100 nodes
+
+Red set to
+10 Nodes - 41/100
+50 Nodes - 42/100
+250 Nodes - 55/100
+1000 Nodes - 55/100
