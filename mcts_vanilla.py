@@ -1,6 +1,7 @@
 
 from mcts_node import MCTSNode
 from random import choice
+from random import shuffle
 from math import sqrt, log
 
 num_nodes = 1000
@@ -16,9 +17,9 @@ def get_urgent_child(node, state, identity):
         if identity != state.player_turn:
             xj = 1 - xj
         nj = child.visits
-
+        exploration_term = sqrt((2 * log(n)) / nj)
         # Calculate
-        newUCB = xj + explore_faction * (sqrt((2 * log(n)) / nj))
+        newUCB = xj + (explore_faction * exploration_term)
         if newUCB > maxUCB:
             best_child = child
             maxUCB = newUCB
@@ -65,6 +66,7 @@ def expand_leaf(node, state):
     Returns:    The added child node.
 
     """
+    shuffle(node.untried_actions)
     next_action = node.untried_actions.pop()
     state.apply_move(next_action)
     next_node = MCTSNode(parent=node, parent_action=next_action, action_list=state.legal_moves)
@@ -80,7 +82,6 @@ def rollout(state, identity):
         state:  The state of the game.
 
     """
-    won = False
     rollout_state = state.copy()
     # Only play to the specified depth. (estimated max 24 moves possible)
     while rollout_state.is_terminal() == False:
@@ -133,7 +134,7 @@ def think(state):
         #Traversal
         leaf,sampled_game = traverse_nodes(node, sampled_game, identity_of_bot)
 
-        # Find out what happened
+        # Expand and roll out unless terminal
         if len(leaf.untried_actions) > 0:
             #Expansion
             new_node,sampled_game = expand_leaf(leaf,sampled_game)
